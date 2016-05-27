@@ -1,0 +1,7 @@
+[submodule "module-utils"]
+ path = module-utils
+ url =  git@github.com:XingXiaoGang/module-utils.git
+ 
+ [submodule "module-socket"]
+ path = module-socket
+ url =  git@github.com:XingXiaoGang/module-socket.git
