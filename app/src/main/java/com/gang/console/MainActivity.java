@@ -10,6 +10,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.fenghuo.utils.shell.ShellUtils2;
+import com.gang.soket.MinaClient;
+import com.gang.soket.MinaServer;
+import com.gang.soket.utils.NetUtils;
 
 /**
  * Created by xingxiaogang on 2016/5/27.
@@ -18,6 +21,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private EditText editText;
     private TextView textView;
+    private TextView ipTextView;
+    private static final int PORT = 10002;
+
     private Handler mHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(Message msg) {
@@ -38,11 +44,24 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_shell);
         editText = (EditText) findViewById(R.id.shell_text);
         textView = (TextView) findViewById(R.id.res_text);
+        ipTextView = (TextView) findViewById(R.id.ip_text);
         findViewById(R.id.exec_single_button).setOnClickListener(this);
         findViewById(R.id.exec_multi_button).setOnClickListener(this);
         findViewById(R.id.exec_single_root_button).setOnClickListener(this);
         findViewById(R.id.exec_multi_root_button).setOnClickListener(this);
+        findViewById(R.id.start_server).setOnClickListener(this);
+        findViewById(R.id.close_server).setOnClickListener(this);
+        findViewById(R.id.send_msg_to_server).setOnClickListener(this);
+        findViewById(R.id.connect_to_server).setOnClickListener(this);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ipTextView.setText("请访问http://" + NetUtils.getIPAddress(getApplicationContext()) + ":" + PORT);
+    }
+
+    MinaClient minaClient;
 
     @Override
     public void onClick(View v) {
@@ -62,6 +81,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
             case R.id.exec_single_root_button: {
                 execShellSingle(true);
+                break;
+            }
+            case R.id.start_server: {
+                MinaServer.getInstance().start(PORT);
+                break;
+            }
+            case R.id.close_server: {
+                MinaServer.getInstance().stop();
+                break;
+            }
+            case R.id.connect_to_server: {
+                minaClient = new MinaClient();
+                minaClient.start(NetUtils.getIPAddress(getApplicationContext()), PORT);
+                break;
+            }
+            case R.id.send_msg_to_server: {
+                minaClient.sendMessage("你好呀~");
                 break;
             }
         }
