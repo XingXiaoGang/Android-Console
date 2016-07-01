@@ -28,7 +28,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    provided fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':module-socket')
     compile project(':module-utils')
 }
