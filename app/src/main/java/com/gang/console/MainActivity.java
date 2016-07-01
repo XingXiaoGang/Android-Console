@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemProperties;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -58,7 +59,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onResume() {
         super.onResume();
-        ipTextView.setText("请访问http://" + NetUtils.getIPAddress(getApplicationContext()) + ":" + PORT);
+        StringBuilder builder = new StringBuilder();
+        builder.append("ro.build.version.sdk: ");
+        builder.append(SystemProperties.get("ro.build.version.sdk"));
+        builder.append("\n");
+        builder.append("ro.product.model: ");
+        builder.append(SystemProperties.get("ro.product.model"));
+        builder.append("\n");
+        builder.append("ro.build.description: ");
+        builder.append(SystemProperties.get("ro.build.description"));
+        builder.append("\n");
+        ipTextView.setText(builder.toString() + "请访问http://" + NetUtils.getIP4Adress(getApplicationContext()) + ":" + PORT);
     }
 
     MinaClient minaClient;
@@ -93,7 +104,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
             case R.id.connect_to_server: {
                 minaClient = new MinaClient();
-                minaClient.start(NetUtils.getIPAddress(getApplicationContext()), PORT);
+                minaClient.start(NetUtils.getIP4Adress(getApplicationContext()), PORT);
                 break;
             }
             case R.id.send_msg_to_server: {
