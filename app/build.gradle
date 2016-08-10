@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 19
+    compileSdkVersion 23
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "com.demo.autosdk" //todo 包名在这里改
+        applicationId "com.demo.console" //todo 包名在这里改
         minSdkVersion 15
-        targetSdkVersion 21
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
@@ -31,4 +31,6 @@ dependencies {
     provided fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':module-socket')
     compile project(':module-utils')
+    compile 'com.android.support:appcompat-v7:23.2.1'
+
 }

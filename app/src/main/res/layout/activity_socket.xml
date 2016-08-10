@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <TextView
+                android:id="@+id/ip_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black" />
+
+            <Button
+                android:id="@+id/start_server"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="开启服务" />
+
+            <Button
+                android:id="@+id/close_server"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="关闭服务" />
+
+            <Button
+                android:id="@+id/connect_to_server"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="客户端连接" />
+
+            <Button
+                android:id="@+id/send_msg_to_server"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="客户端消息" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

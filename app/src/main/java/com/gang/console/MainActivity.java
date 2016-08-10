@@ -1,146 +1,76 @@
 package com.gang.console;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.os.SystemProperties;
-import android.text.TextUtils;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.fenghuo.utils.shell.ShellUtils2;
-import com.gang.soket.MinaClient;
-import com.gang.soket.MinaServer;
-import com.gang.soket.utils.NetUtils;
+import com.fenghuo.utils.hash.CipherUtil_O;
+import com.fenghuo.utils.hash.CipherUtils;
 
 /**
- * Created by xingxiaogang on 2016/5/27.
+ * Created by xingxiaogang on 2016/8/10.
  */
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private EditText editText;
-    private TextView textView;
-    private TextView ipTextView;
-    private static final int PORT = 10002;
 
-    private Handler mHandler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what) {
-                case R.id.shell_complete: {
-                    textView.append("\n" + String.valueOf(msg.obj));
-                    break;
-                }
-            }
-            return false;
-        }
-    });
+    private TextView mShowView;
+    private EditText mInputKeyView;
+    private EditText mInputContentView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_shell);
-        editText = (EditText) findViewById(R.id.shell_text);
-        textView = (TextView) findViewById(R.id.res_text);
-        ipTextView = (TextView) findViewById(R.id.ip_text);
-        findViewById(R.id.exec_single_button).setOnClickListener(this);
-        findViewById(R.id.exec_multi_button).setOnClickListener(this);
-        findViewById(R.id.exec_single_root_button).setOnClickListener(this);
-        findViewById(R.id.exec_multi_root_button).setOnClickListener(this);
-        findViewById(R.id.start_server).setOnClickListener(this);
-        findViewById(R.id.close_server).setOnClickListener(this);
-        findViewById(R.id.send_msg_to_server).setOnClickListener(this);
-        findViewById(R.id.connect_to_server).setOnClickListener(this);
-    }
+        setContentView(R.layout.activity_main);
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        StringBuilder builder = new StringBuilder();
-        builder.append("ro.build.version.sdk: ");
-        builder.append(SystemProperties.get("ro.build.version.sdk"));
-        builder.append("\n");
-        builder.append("ro.product.model: ");
-        builder.append(SystemProperties.get("ro.product.model"));
-        builder.append("\n");
-        builder.append("ro.build.description: ");
-        builder.append(SystemProperties.get("ro.build.description"));
-        builder.append("\n");
-        ipTextView.setText(builder.toString() + "请访问http://" + NetUtils.getIP4Adress(getApplicationContext()) + ":" + PORT);
-    }
+        mInputKeyView = (EditText) findViewById(R.id.input_key_view);
+        mInputContentView = (EditText) findViewById(R.id.input_content_view);
+        mShowView = (TextView) findViewById(R.id.text_show);
 
-    MinaClient minaClient;
+        findViewById(R.id.start_shell).setOnClickListener(this);
+        findViewById(R.id.start_socket).setOnClickListener(this);
+        findViewById(R.id.btn_encryp).setOnClickListener(this);
+    }
 
     @Override
     public void onClick(View v) {
-
         switch (v.getId()) {
-            case R.id.exec_multi_button: {
-                execShellMulti(false);
+            case R.id.start_shell: {
+                Intent intent = new Intent(MainActivity.this, ShellActivity.class);
+                startActivity(intent);
                 break;
             }
-            case R.id.exec_multi_root_button: {
-                execShellMulti(true);
+            case R.id.start_socket: {
+                Intent intent = new Intent(MainActivity.this, SocketActivity.class);
+                startActivity(intent);
                 break;
             }
-            case R.id.exec_single_button: {
-                execShellSingle(false);
-                break;
-            }
-            case R.id.exec_single_root_button: {
-                execShellSingle(true);
-                break;
-            }
-            case R.id.start_server: {
-                MinaServer.getInstance().start(PORT);
-                break;
-            }
-            case R.id.close_server: {
-                MinaServer.getInstance().stop();
-                break;
-            }
-            case R.id.connect_to_server: {
-                minaClient = new MinaClient();
-                minaClient.start(NetUtils.getIP4Adress(getApplicationContext()), PORT);
-                break;
-            }
-            case R.id.send_msg_to_server: {
-                minaClient.sendMessage("你好呀~");
+            case R.id.btn_encryp: {
+                //todo 目前 加密的bug:CipherUtil_O 加密的结果和key没关系 ,而且不 稳定
+                //todo       CipherUtils  对key的长度有要求
+                String text = mInputContentView.getText().toString();
+                String key = mInputKeyView.getText().toString();
+
+                StringBuilder sb = new StringBuilder();
+                byte[] desEncrypt = CipherUtils.DES_encrypt(text, key);
+                String encrypored = CipherUtils.encodeBase64(desEncrypt);
+                sb.append("原文:").append(text).append("\n");
+                sb.append("加密后：").append(encrypored).append("\n"); // 0123 -> CCFhUnCLbdQ=
+                byte[] decrypt = CipherUtils.DES_decrypt(desEncrypt, key);
+                sb.append("还原：").append(decrypt != null ? new String(decrypt) : "null").append("\n");
+
+                sb.append("\n");
+
+                byte[] encrypredByte2 = CipherUtil_O.encrypt(text.getBytes(), key);
+                String encrypored2 = CipherUtil_O.parseByte2HexStr(encrypredByte2);
+                sb.append("加密后：").append(encrypored2).append("\n"); // 0123-> ACDD4D21C890B7C286FD714BCD1DD7F4
+                sb.append("还原：").append(new String(CipherUtil_O.decrypt(encrypredByte2, key))).append("\n");
+                mShowView.setText(sb.toString());
                 break;
             }
         }
     }
-
-    //用同一个process执行多个
-    private void execShellMulti(boolean su) {
-        String shell = editText.getText().toString();
-        if (!TextUtils.isEmpty(shell)) {
-            String command[] = shell.split(";");
-            textView.setText(shell);
-            new ShellUtils2.ShellTask(mHandler, command, su).start();
-        }
-    }
-
-    //一个process执行一个命令
-    private void execShellSingle(boolean su) {
-        String shell = editText.getText().toString();
-        if (!TextUtils.isEmpty(shell)) {
-            String command[] = shell.split(":");
-            String path = null;
-            String str = null;
-            if (command.length == 2) {
-                path = command[0];
-                str = command[1];
-            }
-            if (command.length == 1) {
-                str = command[0];
-            }
-            textView.setText(shell);
-            new ShellUtils2.ShellTask(mHandler, path, str, su).start();
-        }
-    }
-
 }
