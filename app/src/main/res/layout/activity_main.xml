@@ -20,7 +20,7 @@
                 android:layout_height="wrap_content"
                 android:hint="input key here"
                 android:minHeight="50dp"
-                android:text="key.123" />
+                android:text="key.1234" />
 
             <EditText
                 android:id="@+id/input_content_view"

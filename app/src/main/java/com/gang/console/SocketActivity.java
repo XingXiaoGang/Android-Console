@@ -1,7 +1,6 @@
 package com.gang.console;
 
 import android.os.Bundle;
-import android.os.SystemProperties;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -36,13 +35,7 @@ public class SocketActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     protected void onResume() {
         super.onResume();
-        String builder = "ro.build.version.sdk: " +
-                SystemProperties.get("ro.build.version.sdk") +
-                "ro.product.model: " +
-                SystemProperties.get("ro.product.model") +
-                "ro.build.description: " +
-                SystemProperties.get("ro.build.description");
-        ipTextView.setText(builder + "请访问http://" + NetUtils.getIP4Adress(getApplicationContext()) + ":" + PORT);
+        ipTextView.setText("请访问http://" + NetUtils.getIP4Adress(getApplicationContext()) + ":" + PORT);
     }
 
     @Override
