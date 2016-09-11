@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.start_shell).setOnClickListener(this);
         findViewById(R.id.start_socket).setOnClickListener(this);
         findViewById(R.id.btn_encryp).setOnClickListener(this);
+        findViewById(R.id.start_net).setOnClickListener(this);
 
         PackageInfo pkgInfo = null;
 
@@ -50,6 +51,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             case R.id.start_socket: {
                 Intent intent = new Intent(MainActivity.this, SocketActivity.class);
+                startActivity(intent);
+                break;
+            }
+            case R.id.start_net: {
+                Intent intent = new Intent(MainActivity.this, NetActivity.class);
                 startActivity(intent);
                 break;
             }

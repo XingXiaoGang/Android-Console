@@ -49,6 +49,12 @@
                 android:text="Socket测试" />
 
             <Button
+                android:id="@+id/start_net"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Http测试 " />
+
+            <Button
                 android:id="@+id/btn_encryp"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
